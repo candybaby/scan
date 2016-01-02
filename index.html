@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Scan</title>
+	<link rel="stylesheet" type="text/css" href="./css/style.css">
+ 	<script src="./javascript/jquery-2.1.4.js"></script>
+
+	<script type='text/javascript'>
+	$(function() {
+  		$("#inputWord").bind("keypress", function (e) {
+      		if (e.which == 13) enterPress($("#inputWord").val());
+  		});
+	});
+
+	var resultList = [];
+	function enterPress(result)
+	{
+		if (resultList.indexOf(result)==-1) 
+		{
+			// add
+			var $log = $("#dvLog");
+			$log.append(result + "<br/>");
+			resultList.push(result);
+		}
+		else
+		{
+			// exit
+			alert("Exist!!");
+		}
+		$("#inputWord").val('');
+		//alert("Enter:" + result);
+		
+	}
+
+	function save() {
+		var data = "";
+		for(var key in resultList){ 
+			data += resultList[key] + "\n";
+		}
+
+		window.location.href = "data:application/x-download;charset=utf-8," + encodeURIComponent(data);
+	}
+
+	</script>
+</head>
+<body>
+<input type="text" id="inputWord" />
+<div id="dvLog"></div>
+<input type="button" onclick="save()" value="儲存檔案" />
+
+
+</body>
+</html>
