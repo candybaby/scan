@@ -26,28 +26,50 @@
 		else
 		{
 			// exit
-			alert("Exist!!");
+			alert("資料重複!!");
 		}
 		$("#inputWord").val('');
 		//alert("Enter:" + result);
 		
 	}
 
+	var textFile = null
+	makeTextFile = function (text) {
+    	var data = new Blob([text], {type: 'text/plain'});
+
+    	// If we are replacing a previously generated file we need to
+    	// manually revoke the object URL to avoid memory leaks.
+    	if (textFile !== null) {
+      		window.URL.revokeObjectURL(textFile);
+    	}
+
+    	textFile = window.URL.createObjectURL(data);
+
+    	return textFile;
+  	};
+
 	function save() {
 		var data = "";
 		for(var key in resultList){ 
-			data += resultList[key] + "\n";
+			data += resultList[key] + "\r\n";
 		}
 
-		window.location.href = "data:application/x-download;charset=utf-8," + encodeURIComponent(data);
+		var link = document.getElementById('downloadlink');
+    	link.href = makeTextFile(data);
+    	link.style.display = 'block';
+    	link.click();
 	}
+	
+	
 
 	</script>
 </head>
 <body>
 <input type="text" id="inputWord" />
-<div id="dvLog"></div>
 <input type="button" onclick="save()" value="儲存檔案" />
+<a download="result.txt" id="downloadlink" style="display: none"></a>
+<div id="dvLog"></div>
+
 
 
 </body>
