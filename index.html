@@ -9,14 +9,22 @@
 	<link rel="stylesheet" type="text/css" href="./css/style.css">
 
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="./js/jquery-2.1.4.js"></script>
     <script src="./js/bootstrap.min.js"></script>
- 	<script src="./js/jquery-2.1.4.js"></script>
+ 	
 
 	<script type='text/javascript'>
 	$(function() {
   		$("#inputWord").bind("keypress", function (e) {
-      		if (e.which == 13) enterPress($("#inputWord").val());
+      		if (e.which == 13 && $("#inputWord").val() != "") enterPress($("#inputWord").val());
   		});
+  		$("#inputWord").focus();
+  		$("#numCount").html(0);
+  		$('#alertModal').on('hidden.bs.modal', function (e) {
+  			// do something...
+  			$("#inputWord").removeAttr("disabled");
+			$("#inputWord").focus();
+		})
 	});
 
 	var resultList = [];
@@ -26,13 +34,16 @@
 		{
 			// add
 			var $log = $("#dvLog");
-			$log.append(result + "<br/>");
+			$log.prepend("<p>" + result + "</p>");
 			resultList.push(result);
+			$("#numCount").html(resultList.length);
 		}
 		else
 		{
-			// exit
-			alert("資料重複!!");
+			// exist
+			$("#alertModal").modal();
+			$("#inputWord").attr('disabled', 'disabled');
+			//alert("資料重複!!");
 		}
 		$("#inputWord").val('');
 		//alert("Enter:" + result);
@@ -65,18 +76,46 @@
     	link.style.display = 'block';
     	link.click();
 	}
-	
-	
 
 	</script>
 </head>
 <body>
-<input type="text" id="inputWord" />
-<input type="button" onclick="save()" value="儲存檔案" />
-<a download="result.txt" id="downloadlink" style="display: none"></a>
-<div id="dvLog"></div>
+	<div class="container">
+		<h2>條碼驗證工具</h2>
+		<div class="row">
+  			<div class="col-xs-2">
+  				<input class="form-control" type="text" id="inputWord" placeholder="條碼輸入" />
+  			</div>
+  			<div class="col-xs-3">
 
+    			<button class="btn btn-info" type="submit" onclick="save()">儲存檔案 <span class="badge" id="numCount">0</span></button>
+    			<a download="result.txt" id="downloadlink" style="display: none"></a>
 
+  			</div>
+  			<div class="col-xs-4">
+  				
+  			</div>
+		</div>
+		<div id="dvLog"></div>
+
+		<!-- Modal -->
+		<div id="alertModal" class="modal fade" role="dialog">
+  			<div class="modal-dialog">
+
+    			<!-- Modal content-->
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal">&times;</button>
+        				<h4 class="modal-title">提示</h4>
+      				</div>
+      				<div class="modal-body">
+        				<h3><span class="glyphicon glyphicon-exclamation-sign"></span>資料重複</h3>
+      				</div>
+    			</div>
+  			</div>
+		</div>
+
+	</div>
 
 </body>
 </html>
