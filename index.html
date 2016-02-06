@@ -14,6 +14,8 @@
  	
 
 	<script type='text/javascript'>
+	var resultList = [];
+	
 	$(function() {
   		$("#inputWord").bind("keypress", function (e) {
       		if (e.which == 13 && $("#inputWord").val() != "") enterPress($("#inputWord").val());
@@ -24,18 +26,25 @@
   			// do something...
   			$("#inputWord").removeAttr("disabled");
 			$("#inputWord").focus();
-		})
+		});
+		// read localStorage items
+  		resultList = readItems();
+  		console.log(resultList);
+  		for(var key in resultList) {
+			$("#dvLog").prepend("<p>" + resultList[key] + "</p>");
+		}
+		$("#numCount").html(resultList.length);
+		
 	});
-
-	var resultList = [];
+	
 	function enterPress(result)
 	{
 		if (resultList.indexOf(result)==-1) 
 		{
 			// add
-			var $log = $("#dvLog");
-			$log.prepend("<p>" + result + "</p>");
+			$("#dvLog").prepend("<p>" + result + "</p>");
 			resultList.push(result);
+			storeItems(resultList);
 			$("#numCount").html(resultList.length);
 		}
 		else
@@ -50,8 +59,21 @@
 		
 	}
 
-	var textFile = null
-	makeTextFile = function (text) {
+	function saveToFile() {
+		var data = "";
+		for(var key in resultList){ 
+			data += resultList[key] + "\r\n";
+		}
+
+		var link = document.getElementById('downloadlink');
+    	link.href = makeTextFile(data);
+    	link.style.display = 'block';
+    	link.click();
+	}
+
+
+	function makeTextFile(text) {
+		var textFile = null;
     	var data = new Blob([text], {type: 'text/plain'});
 
     	// If we are replacing a previously generated file we need to
@@ -65,36 +87,47 @@
     	return textFile;
   	};
 
-	function save() {
-		var data = "";
-		for(var key in resultList){ 
-			data += resultList[key] + "\r\n";
-		}
+  	function storeItems(array) {
+  		localStorage.setItem("items", JSON.stringify(array));
+  	}
 
-		var link = document.getElementById('downloadlink');
-    	link.href = makeTextFile(data);
-    	link.style.display = 'block';
-    	link.click();
-	}
+  	function readItems() {
+  		var items = localStorage["items"];
+  		if (typeof(items) == "undefined") {
+  			items = '[]';
+  		}
+  		return JSON.parse(items);
+  	}
 
-	</script>
+  	function clearItems() {
+  		localStorage.removeItem("items");
+  	}
+
+  	function clearUI() {
+		resultList = [];	
+		$("#numCount").html(resultList.length);
+		$("#dvLog").html("");
+		$("#inputWord").val('');
+  	}
+
+  	function clearTmp() {
+  		clearItems();
+		clearUI();
+  	}
+
+  	</script>
 </head>
 <body>
 	<div class="container">
 		<h2>條碼驗證工具</h2>
-		<div class="row">
-  			<div class="col-xs-2">
+		<div class="form-inline">
+  			<div class="form-group">
   				<input class="form-control" type="text" id="inputWord" placeholder="條碼輸入" />
-  			</div>
-  			<div class="col-xs-3">
-
-    			<button class="btn btn-info" type="submit" onclick="save()">儲存檔案 <span class="badge" id="numCount">0</span></button>
+  				<button class="btn btn-info" onclick="saveToFile()">儲存檔案 <span class="badge" id="numCount">0</span></button>
     			<a download="result.txt" id="downloadlink" style="display: none"></a>
+    			<button class="btn btn-info" onclick="clearTmp()">清除暫存</button>
+  			</div>
 
-  			</div>
-  			<div class="col-xs-4">
-  				
-  			</div>
 		</div>
 		<div id="dvLog"></div>
 
