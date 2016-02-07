@@ -1,154 +1,151 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<title>Scan</title>
-	<!-- Bootstrap -->
-    <link href="./css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="utf-8">
+  <title>Scan</title>
+  <!-- Bootstrap -->
+  <link href="./css/bootstrap.min.css" rel="stylesheet">
 
-	<link rel="stylesheet" type="text/css" href="./css/style.css">
+  <link rel="stylesheet" type="text/css" href="./css/style.css">
 
-	<!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="./js/jquery-2.1.4.js"></script>
-    <script src="./js/bootstrap.min.js"></script>
- 	
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="./js/jquery-2.1.4.js"></script>
+  <script src="./js/bootstrap.min.js"></script>
+  
 
-	<script type='text/javascript'>
-	var resultList = [];
-	
-	$(function() {
-  		$("#inputWord").bind("keypress", function (e) {
-      		if (e.which == 13 && $("#inputWord").val() != "") enterPress($("#inputWord").val());
-  		});
-  		$("#inputWord").focus();
-  		$("#numCount").html(0);
-  		$('#alertModal').on('hidden.bs.modal', function (e) {
-  			// do something...
-  			$("#inputWord").removeAttr("disabled");
-			$("#inputWord").focus();
-		});
-		// read localStorage items
-  		resultList = readItems();
-  		console.log(resultList);
-  		for(var key in resultList) {
-			$("#dvLog").prepend("<p>" + resultList[key] + "</p>");
-		}
-		$("#numCount").html(resultList.length);
-		
-	});
-	
-	function enterPress(result)
-	{
-		if (resultList.indexOf(result)==-1) 
-		{
-			// add
-			$("#dvLog").prepend("<p>" + result + "</p>");
-			resultList.push(result);
-			storeItems(resultList);
-			$("#numCount").html(resultList.length);
-		}
-		else
-		{
-			// exist
-			$("#alertModal").modal();
-			$("#inputWord").attr('disabled', 'disabled');
-			//alert("資料重複!!");
-		}
-		$("#inputWord").val('');
-		//alert("Enter:" + result);
-		
-	}
+  <script type='text/javascript'>
+  var resultList = [];
+  
+  $(function() {
+    $("#inputWord").bind("keypress", function (e) {
+        if (e.which == 13 && $("#inputWord").val() != "") enterPress($("#inputWord").val());
+    });
+    $("#inputWord").focus();
+    $("#numCount").html(0);
+    $('#alertModal').on('hidden.bs.modal', function (e) {
+      // do something...
+      $("#inputWord").removeAttr("disabled");
+      $("#inputWord").focus();
+    });
+    // read localStorage items
+    resultList = readItems();
+    for(var key in resultList) {
+      $("#dvLog").prepend("<p>" + resultList[key] + "</p>");
+    }
+    $("#numCount").html(resultList.length);
+  });
+  
+  function enterPress(result)
+  {
+    if (resultList.indexOf(result)==-1) 
+    {
+      // add
+      $("#dvLog").prepend("<p>" + result + "</p>");
+      resultList.push(result);
+      storeItems(resultList);
+      $("#numCount").html(resultList.length);
+    }
+    else
+    {
+      // exist
+      $("#alertModal").modal();
+      $("#inputWord").attr('disabled', 'disabled');
+      //alert("資料重複!!");
+    }
+    $("#inputWord").val('');
+    //alert("Enter:" + result);
+    
+  }
 
-	function saveToFile() {
-		var data = "";
-		for(var key in resultList){ 
-			data += resultList[key] + "\r\n";
-		}
+  function saveToFile() {
+    var data = "";
+    for(var key in resultList){ 
+      data += resultList[key] + "\r\n";
+    }
 
-		var link = document.getElementById('downloadlink');
-    	link.href = makeTextFile(data);
-    	link.style.display = 'block';
-    	link.click();
-	}
+    var link = document.getElementById('downloadlink');
+      link.href = makeTextFile(data);
+      link.style.display = 'block';
+      link.click();
+  }
 
 
-	function makeTextFile(text) {
-		var textFile = null;
-    	var data = new Blob([text], {type: 'text/plain'});
+  function makeTextFile(text) {
+    var textFile = null;
+    var data = new Blob([text], {type: 'text/plain'});
 
-    	// If we are replacing a previously generated file we need to
-    	// manually revoke the object URL to avoid memory leaks.
-    	if (textFile !== null) {
-      		window.URL.revokeObjectURL(textFile);
-    	}
+    // If we are replacing a previously generated file we need to
+    // manually revoke the object URL to avoid memory leaks.
+    if (textFile !== null) {
+      window.URL.revokeObjectURL(textFile);
+    }
 
-    	textFile = window.URL.createObjectURL(data);
+    textFile = window.URL.createObjectURL(data);
 
-    	return textFile;
-  	};
+    return textFile;
+  };
 
-  	function storeItems(array) {
-  		localStorage.setItem("items", JSON.stringify(array));
-  	}
+  function storeItems(array) {
+    localStorage.setItem("items", JSON.stringify(array));
+  }
 
-  	function readItems() {
-  		var items = localStorage["items"];
-  		if (typeof(items) == "undefined") {
-  			items = '[]';
-  		}
-  		return JSON.parse(items);
-  	}
+  function readItems() {
+    var items = localStorage["items"];
+    if (typeof(items) == "undefined") {
+      items = '[]';
+    }
+    return JSON.parse(items);
+  }
 
-  	function clearItems() {
-  		localStorage.removeItem("items");
-  	}
+  function clearItems() {
+    localStorage.removeItem("items");
+  }
 
-  	function clearUI() {
-		resultList = [];	
-		$("#numCount").html(resultList.length);
-		$("#dvLog").html("");
-		$("#inputWord").val('');
-  	}
+  function clearUI() {
+    resultList = [];  
+    $("#numCount").html(resultList.length);
+    $("#dvLog").html("");
+    $("#inputWord").val('');
+  }
 
-  	function clearTmp() {
-  		clearItems();
-		clearUI();
-  	}
+  function clearTmp() {
+    clearItems();
+    clearUI();
+  }
 
-  	</script>
+  </script>
 </head>
 <body>
-	<div class="container">
-		<h2>條碼驗證工具</h2>
-		<div class="form-inline">
-  			<div class="form-group">
-  				<input class="form-control" type="text" id="inputWord" placeholder="條碼輸入" />
-  				<button class="btn btn-info" onclick="saveToFile()">儲存檔案 <span class="badge" id="numCount">0</span></button>
-    			<a download="result.txt" id="downloadlink" style="display: none"></a>
-    			<button class="btn btn-info" onclick="clearTmp()">清除暫存</button>
-  			</div>
+  <div class="container">
+    <h2>條碼驗證工具</h2>
+    <div class="form-inline">
+        <div class="form-group">
+          <input class="form-control" type="text" id="inputWord" placeholder="條碼輸入" />
+          <button class="btn btn-info" onclick="saveToFile()">儲存檔案 <span class="badge" id="numCount">0</span></button>
+          <button class="btn btn-info" onclick="clearTmp()">清除暫存</button>
+          <a download="result.txt" id="downloadlink" style="display: none"></a>
+        </div>
+    </div>
+    <div id="dvLog"></div>
 
-		</div>
-		<div id="dvLog"></div>
+    <!-- Modal -->
+    <div id="alertModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
 
-		<!-- Modal -->
-		<div id="alertModal" class="modal fade" role="dialog">
-  			<div class="modal-dialog">
+          <!-- Modal content-->
+          <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">提示</h4>
+              </div>
+              <div class="modal-body">
+                <h3><span class="glyphicon glyphicon-exclamation-sign"></span>資料重複</h3>
+              </div>
+          </div>
+        </div>
+    </div>
 
-    			<!-- Modal content-->
-    			<div class="modal-content">
-      				<div class="modal-header">
-        				<button type="button" class="close" data-dismiss="modal">&times;</button>
-        				<h4 class="modal-title">提示</h4>
-      				</div>
-      				<div class="modal-body">
-        				<h3><span class="glyphicon glyphicon-exclamation-sign"></span>資料重複</h3>
-      				</div>
-    			</div>
-  			</div>
-		</div>
-
-	</div>
+  </div>
 
 </body>
 </html>
